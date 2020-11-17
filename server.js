@@ -105,8 +105,13 @@ schedule.scheduleJob(rule, function(){
         //console.log(config.baseUrl);
       //  listmake.newmethod();
        // getTodos();
-       masgterlist.prototype.getDefaulBillingStatus(config.baseUrl);
+       masgterlist.prototype.getcompanineslist(config.baseUrl);
     }
+    // getcompanieslist --from timer 
+    // getcompanineslist -- from controller
+    // CallCompaniesforlistMethod -- from controller in 2 step -- fetching the company details from listmaster table
+    // processinvoicelistforcompanies -- from controller after 3 step -- loop each company and fetch the billing details
+    //  and inserting in the list stage table
     
 });
  const urls = [

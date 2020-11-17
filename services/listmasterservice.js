@@ -6,7 +6,7 @@ const moment = require('moment');
 
 module.exports = class ListMasterService {
     
-     async getBillingDefaultStatus(environment) {
+     async GetCompaniesforlist(environment) {
              // let companyID =environment;
         let url='list/getsampletest';
         const optionurl = config.baseUrl + url;
@@ -18,19 +18,19 @@ module.exports = class ListMasterService {
              authorization: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wYW55SWQiOiI1ZjQ4OTkwNjVhMjc5NzA2YjBjZTgyMTEiLCJjb21wYW55TmFtZSI6IkNvb2xlciIsImlzQWRtaW4iOiIxNTEiLCJ1c2VyVHlwZSI6NCwiaXNTdXBlckFkbWluIjowLCJ1c2VySWQiOiI1ZjQ4OTkxYTVhMjc5NzA2YjBjZTgzNzQiLCJ1c2VyTmFtZSI6IkNvb2xlciIsImlhdCI6MTU5OTg0MDkzOX0.y9UCSb4PUsKtaeuNTHhzCMU8rWDFT2hYySJvIh91jr4',
              environment: environment } };
              let myvvalue = await this.requestinfo(optionurl);          
-             return myvvalue;             
+             return myvvalue.data;             
     }  
 
     async GetListStage(item){
-        let url='list/getsampletest';
-        const optionurl = config.baseUrl + url;
-        var options = { method: 'GET',
-          url: optionurl,
-          headers: 
-           { 
-             'cache-control': 'no-cache',
-             authorization: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wYW55SWQiOiI1ZjQ4OTkwNjVhMjc5NzA2YjBjZTgyMTEiLCJjb21wYW55TmFtZSI6IkNvb2xlciIsImlzQWRtaW4iOiIxNTEiLCJ1c2VyVHlwZSI6NCwiaXNTdXBlckFkbWluIjowLCJ1c2VySWQiOiI1ZjQ4OTkxYTVhMjc5NzA2YjBjZTgzNzQiLCJ1c2VyTmFtZSI6IkNvb2xlciIsImlhdCI6MTU5OTg0MDkzOX0.y9UCSb4PUsKtaeuNTHhzCMU8rWDFT2hYySJvIh91jr4',
-             environment: item.environment } };
+        // let url='list/getsampletest';
+        // const optionurl = config.baseUrl + url;
+        // var options = { method: 'GET',
+        //   url: optionurl,
+        //   headers: 
+        //    { 
+        //      'cache-control': 'no-cache',
+        //      authorization: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wYW55SWQiOiI1ZjQ4OTkwNjVhMjc5NzA2YjBjZTgyMTEiLCJjb21wYW55TmFtZSI6IkNvb2xlciIsImlzQWRtaW4iOiIxNTEiLCJ1c2VyVHlwZSI6NCwiaXNTdXBlckFkbWluIjowLCJ1c2VySWQiOiI1ZjQ4OTkxYTVhMjc5NzA2YjBjZTgzNzQiLCJ1c2VyTmFtZSI6IkNvb2xlciIsImlhdCI6MTU5OTg0MDkzOX0.y9UCSb4PUsKtaeuNTHhzCMU8rWDFT2hYySJvIh91jr4',
+        //      environment: item.environment } };
              let myvvalue = await this.requestwithparam(item);
            //  console.log("myvalue print ", myvvalue);
              return myvvalue;
