@@ -1,4 +1,8 @@
 {
     "baseUrl": "http://localhost:3000/api/v1/",
-    "environment":"Live"
+    "environment":"Live",
+    "Live_key_id":"rzp_test_pxJqzKrUWTCVbi",
+    "Live_key_secret":"HBPUTLri9Gcxe3UGhrsXQoxe",
+    "Authorization":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wYW55SWQiOiI1ZjQ4OTkwNjVhMjc5NzA2YjBjZTgyMTEiLCJjb21wYW55TmFtZSI6IkNvb2xlciIsImlzQWRtaW4iOiIxNTEiLCJ1c2VyVHlwZSI6NCwiaXNTdXBlckFkbWluIjowLCJ1c2VySWQiOiI1ZjQ4OTkxYTVhMjc5NzA2YjBjZTgzNzQiLCJ1c2VyTmFtZSI6IkNvb2xlciIsImlhdCI6MTU5OTg0MDkzOX0.y9UCSb4PUsKtaeuNTHhzCMU8rWDFT2hYySJvIh91jr4"
+
 }

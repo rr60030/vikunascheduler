@@ -11,7 +11,8 @@ const logger = require('./helpers/errorlog');
 const config =require('./util/configuration');
 const generatelist = require('./controllers/zlist.controller');
 const listmake =require('./services/listzgenerate.service');
-const masgterlist = require('./controllers/listgenerate.Controller')
+const masgterlist = require('./controllers/listgenerate.Controller');
+const invoicelist = require('./controllers/integration.Controller');
 
 
 
@@ -84,7 +85,10 @@ intiApp();
 
 const scheduletime=dateFormat(new Date(), "H") + ":00";
 var rule = new schedule.RecurrenceRule();
-rule.minute = new schedule.Range(0, 59,2);
+rule.minute = new schedule.Range(0, 59,5);
+let invoicerule = new schedule.RecurrenceRule();
+invoicerule.minute= new schedule.Range(0,59,2);
+
 schedule.scheduleJob(rule, function(){ 
     if(global.NoErrorInfo)
     console.log("some error ");
@@ -102,10 +106,9 @@ schedule.scheduleJob(rule, function(){
         let seconds = date_ob.getSeconds();
                 
         console.log(year + "-" + month + "-" + date + ' ' + hours + ":" + minutes + ":" + seconds);
-        //console.log(config.baseUrl);
-      //  listmake.newmethod();
-       // getTodos();
-       masgterlist.prototype.getcompanineslist(config.baseUrl);
+       
+      console.log("<--------List Generation Started------->");
+      masgterlist.prototype.getcompanineslist(config.baseUrl);
     }
     // getcompanieslist --from timer 
     // getcompanineslist -- from controller
@@ -114,6 +117,34 @@ schedule.scheduleJob(rule, function(){
     //  and inserting in the list stage table
     
 });
+
+schedule.scheduleJob(invoicerule, function(){ 
+    if(global.NoErrorInfo)
+    console.log("some error ");
+    else
+    {   
+       
+        let ts = Date.now();
+        let date_ob = new Date(ts);
+        let date = date_ob.getDate();
+        let month = date_ob.getMonth() + 1;
+        let year = date_ob.getFullYear();
+        let hours = date_ob.getHours();
+        let minutes = date_ob.getMinutes();
+        let seconds = date_ob.getSeconds();
+                
+        console.log(year + "-" + month + "-" + date + ' ' + hours + ":" + minutes + ":" + seconds);
+        Date.prototype.toUnixTime = function() { return this.getTime()/1000|0 };
+        Date.time = function() { return new Date().toUnixTime(); }
+    
+        // Get the current unix time: 
+        console.log("Current Time: " + Date.time())
+    
+       //invoicelist.prototype.GetListforPayment(config.environment);
+    } 
+});
+
+
  const urls = [
       'https://jsonplaceholder.typicode.com/todos/1',
       'https://jsonplaceholder.typicode.com/todos/2',
@@ -137,17 +168,3 @@ schedule.scheduleJob(rule, function(){
     
     
 
-//  const control = async _ => {
-//     console.log('Start')
-  
-//     const numApples = await getNumFruit('apple')
-//     console.log(numApples)
-  
-//     const numGrapes = await getNumFruit('grape')
-//     console.log(numGrapes)
-  
-//     const numPears = await getNumFruit('pear')
-//     console.log(numPears)
-  
-//     console.log('End')
-//   }
