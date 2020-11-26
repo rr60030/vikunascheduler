@@ -8,6 +8,7 @@ module.exports = class ListGenerateController {
         } else {
             const datavalue = value.data;
             for (const [idx, url] of datavalue.entries()) {
+                console.log(`environment:${url.environment}, CompanyID:${url.companyId}`);
                 const todo = await this.callingservice(url);               
                 if (!todo) {
                     throw new Error(`HTTP error! status: ${todo.status}`);

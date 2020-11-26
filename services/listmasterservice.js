@@ -11,7 +11,7 @@ module.exports = class ListMasterService {
   async GetCompaniesforlist(environment) {  
     let url = 'list/getsampletest';
     const optionurl = config.baseUrl + url;   
-    let myvvalue = await this.requestinfo(optionurl);
+    let myvvalue = await this.requestinfo(optionurl,environment);
     return myvvalue.data;
   }
 
@@ -36,12 +36,12 @@ module.exports = class ListMasterService {
     console.log('Finished!');
   }
 
-  async requestinfo(optionurl) {
+  async requestinfo(optionurl,env) {
     const url = `list/getsampletest`;
     const response = await axios.get(config.baseUrl + url, {
       headers: {
         'Authorization': `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wYW55SWQiOiI1ZjQ4OTkwNjVhMjc5NzA2YjBjZTgyMTEiLCJjb21wYW55TmFtZSI6IkNvb2xlciIsImlzQWRtaW4iOiIxNTEiLCJ1c2VyVHlwZSI6NCwiaXNTdXBlckFkbWluIjowLCJ1c2VySWQiOiI1ZjQ4OTkxYTVhMjc5NzA2YjBjZTgzNzQiLCJ1c2VyTmFtZSI6IkNvb2xlciIsImlhdCI6MTU5OTg0MDkzOX0.y9UCSb4PUsKtaeuNTHhzCMU8rWDFT2hYySJvIh91jr4`,
-        environment: 'Live'
+        environment: env
       }
     });
     if (response) {    
@@ -59,25 +59,11 @@ module.exports = class ListMasterService {
 
   async requestwithparam(item) {
     try {
-      const optionurl = config.baseUrl + item.APiUrl;
-      let Datevalue = moment().add(item.NoDays, "days").format("YYYY-MM-DD");
-      let query = {
-        companyId: item.companyId,
-        currency: '',
-        startDate: "2020-11-20",
-        endDate: Datevalue,
-        contractId: '',
-        customerId: '',
-        contractName: '',
-        customerMobile: '',
-        milestonestatusID: '',
-        contactObjId: '',
-        environment: item.environment
-      };
+      
       //console.log("Query is ", query);
       let url = optionurl + `?companyId=${query.companyId}&currency=${query.currency}&startDate=${query.startDate}&endDate=${query.endDate}&contractId=${query.contractId}&customerId=${query.customerId}&contractName=${query.contractName}&customerMobile=${query.customerMobile}&milestonestatusID=${query.milestonestatusID}&contactObjId=${query.contactObjId}`;
       //const url = optionurl + `?companyId=${query.companyId}&startDate=${query.startDate}&endDate=${query.endDate}`;     
-     // console.log("url is :::: " , url);
+     console.log(`companyid: ${query.companyId} , url is :${url}`);
       const response = await axios.get(url, {
         headers: {
           'Authorization': `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wYW55SWQiOiI1ZjQ4OTkwNjVhMjc5NzA2YjBjZTgyMTEiLCJjb21wYW55TmFtZSI6IkNvb2xlciIsImlzQWRtaW4iOiIxNTEiLCJ1c2VyVHlwZSI6NCwiaXNTdXBlckFkbWluIjowLCJ1c2VySWQiOiI1ZjQ4OTkxYTVhMjc5NzA2YjBjZTgzNzQiLCJ1c2VyTmFtZSI6IkNvb2xlciIsImlhdCI6MTU5OTg0MDkzOX0.y9UCSb4PUsKtaeuNTHhzCMU8rWDFT2hYySJvIh91jr4`,
@@ -355,7 +341,7 @@ module.exports = class ListMasterService {
      'cache-control': 'no-cache',
      authorization: 'Basic cnpwX3Rlc3RfcHhKcXpLclVXVENWYmk6SEJQVVRMcmk5R2N4ZTNVR2hyc1hRb3hl',
      'content-type': 'application/json' },
-  body: razorpayJSON,
+      body: razorpayJSON,
   //  { type: 'invoice',
   //    description: 'Invoice for the month of January 2020',
   //    partial_payment: true,
@@ -396,5 +382,69 @@ request(options, function (error, response, body) {
 });
   }
 
+  async GetOnlinePaymentCredentials(query,companyId,env){
+    try{
+      let url = `integrations/getAdmintegrationById`;
+      if (query.id) url = `${url}?id=${query.id}`;
+      if (query.controlpanelid) url = `${url}?controlpanelid=${query.controlpanelid}`;
+      const headers = {
+        'Authorization': `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wYW55SWQiOiI1ZjQ4OTkwNjVhMjc5NzA2YjBjZTgyMTEiLCJjb21wYW55TmFtZSI6IkNvb2xlciIsImlzQWRtaW4iOiIxNTEiLCJ1c2VyVHlwZSI6NCwiaXNTdXBlckFkbWluIjowLCJ1c2VySWQiOiI1ZjQ4OTkxYTVhMjc5NzA2YjBjZTgzNzQiLCJ1c2VyTmFtZSI6IkNvb2xlciIsImlhdCI6MTU5OTg0MDkzOX0.y9UCSb4PUsKtaeuNTHhzCMU8rWDFT2hYySJvIh91jr4`,
+        environment: env,
+        companyId:companyId.companyId,
+        source:"noti"
+      }
+      const response = await axios.get(config.baseUrl + url, {
+        headers: headers
+      });
+      if (response) {
+       // console.log("3", response)
+      // this.calculateData(response.data.data['adm_integration'], response.data.data['integration']);
+      response.data.data['adm_integration'].map((m)=>{
+        response.data.data['integration'].forEach(n => {
+          if(m._id == n.admIntegrationId){
+            m.connected = n;
+            return m;
+          }
+        });
+      })
+      return { status: 200, data: response.data.data['adm_integration'] };
+      }
+      else {
+        return { status: 200, error: error };
+      }
+    }
+    catch(error){
+      return { status: 500, error: error };
+    }
+  }
 
+ async createlistmaster(insertarray){
+    const insertresponse = await axios.post(config.baseUrl + 'list/StagingDataCreate', insertarray, {
+      headers: {
+        'Authorization': `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wYW55SWQiOiI1ZjQ4OTkwNjVhMjc5NzA2YjBjZTgyMTEiLCJjb21wYW55TmFtZSI6IkNvb2xlciIsImlzQWRtaW4iOiIxNTEiLCJ1c2VyVHlwZSI6NCwiaXNTdXBlckFkbWluIjowLCJ1c2VySWQiOiI1ZjQ4OTkxYTVhMjc5NzA2YjBjZTgzNzQiLCJ1c2VyTmFtZSI6IkNvb2xlciIsImlhdCI6MTU5OTg0MDkzOX0.y9UCSb4PUsKtaeuNTHhzCMU8rWDFT2hYySJvIh91jr4`,
+        environment: 'Live'
+      }
+    })
+    if (insertresponse) {
+      //console.log("<--------Inserted into list master table for companies which are configured onlinepayment------->")
+      return { status: 200, data: insertresponse.data };
+    }
+    else {
+      return { status: 200, error: error };
+    }
+  }
+ async fetchlistrecords(query,optionurl){
+   let env = query.environment;
+    let url = optionurl + `?companyId=${query.companyId}&currency=${query.currency}&startDate=${query.startDate}&endDate=${query.endDate}&contractId=${query.contractId}&customerId=${query.customerId}&contractName=${query.contractName}&customerMobile=${query.customerMobile}&milestonestatusID=${query.milestonestatusID}&contactObjId=${query.contactObjId}`;
+  //  console.log("url",url);
+    const response = await axios.get(url, {
+      headers: {
+        'Authorization': `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wYW55SWQiOiI1ZjQ4OTkwNjVhMjc5NzA2YjBjZTgyMTEiLCJjb21wYW55TmFtZSI6IkNvb2xlciIsImlzQWRtaW4iOiIxNTEiLCJ1c2VyVHlwZSI6NCwiaXNTdXBlckFkbWluIjowLCJ1c2VySWQiOiI1ZjQ4OTkxYTVhMjc5NzA2YjBjZTgzNzQiLCJ1c2VyTmFtZSI6IkNvb2xlciIsImlhdCI6MTU5OTg0MDkzOX0.y9UCSb4PUsKtaeuNTHhzCMU8rWDFT2hYySJvIh91jr4`,
+        environment:env
+      }
+    });
+    if (response) {
+      return { status: 200, data:response.data}
+    }
+  }
 }

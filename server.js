@@ -13,6 +13,7 @@ const generatelist = require('./controllers/zlist.controller');
 const listmake =require('./services/listzgenerate.service');
 const masgterlist = require('./controllers/listgenerate.Controller');
 const invoicelist = require('./controllers/integration.Controller');
+const generatelistcontroller = require('./controllers/generatelist.Controller');
 
 
 
@@ -85,7 +86,7 @@ intiApp();
 
 const scheduletime=dateFormat(new Date(), "H") + ":00";
 var rule = new schedule.RecurrenceRule();
-rule.minute = new schedule.Range(0, 59,5);
+rule.minute = new schedule.Range(0, 59,2);
 let invoicerule = new schedule.RecurrenceRule();
 invoicerule.minute= new schedule.Range(0,59,2);
 
@@ -108,7 +109,8 @@ schedule.scheduleJob(rule, function(){
         console.log(year + "-" + month + "-" + date + ' ' + hours + ":" + minutes + ":" + seconds);
        
       console.log("<--------List Generation Started------->");
-      masgterlist.prototype.getcompanineslist(config.baseUrl);
+      //masgterlist.prototype.getcompanineslist(config.environment);
+      generatelistcontroller.prototype.getcompanineslist(config.environment);
     }
     // getcompanieslist --from timer 
     // getcompanineslist -- from controller
