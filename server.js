@@ -110,7 +110,7 @@ schedule.scheduleJob(rule, function(){
        
       console.log("<--------List Generation Started------->");
       //masgterlist.prototype.getcompanineslist(config.environment);
-      generatelistcontroller.prototype.getcompanineslist(config.environment);
+     generatelistcontroller.prototype.getcompanineslist(config.environment);
     }
     // getcompanieslist --from timer 
     // getcompanineslist -- from controller
@@ -142,7 +142,7 @@ schedule.scheduleJob(invoicerule, function(){
         // Get the current unix time: 
         console.log("Current Time: " + Date.time())
     
-       //invoicelist.prototype.GetListforPayment(config.environment);
+        generatelistcontroller.prototype.processinvoicepayment(config.environment);
     } 
 });
 

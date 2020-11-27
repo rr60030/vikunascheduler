@@ -63,8 +63,9 @@ module.exports = class GenerateInvoiceListController {
                                   id: element._id,
                                   parameters:integrationarray[0].parameters,
                                   integratorname:integrationarray[0].integratorname,
-                                  integrationid:integrationarray[0]._id,
-                                  admIntegrationId:integrationarray[0].admIntegrationId
+                                  integrationid:integrationarray[0].connected._id,
+                                  admIntegrationId:integrationarray[0].connected.admIntegrationId
+                                 
                                 }
                                 insertarray.push(item);
                               });
@@ -111,4 +112,112 @@ module.exports = class GenerateInvoiceListController {
                 return { status: 500, message: error.message }
             });
     }
+
+    async processinvoicepayment(environment){
+        console.log("*****Get CompanyIDs + Time (Schedular)*****");
+        const value = await this.CallCompaniesforlistMethod(environment);      
+        if (value.status && value.status == 500) {
+            console.log(value.message)
+        } else {
+            const datavalue = value.data;
+            for (const [idx, url] of datavalue.entries()) {
+               // console.log(`environment:${url.environment}, CompanyID:${url.companyId}`);
+                //GetOnlinePaymentCredentials
+                console.log("*****GetOnlinePaymentCredentials*****");               
+                const todo = await listservice.prototype.fetchstagerecords(url);               
+                if (!todo) {
+                    throw new Error(`HTTP error! status: ${todo.status}`);
+                } else {         
+                    if(todo.data.data.length > 0){
+                        const gatewayname = todo.data.data[0].integratorname;
+                        const paymentcred = {
+                            companyId:todo.data.data[0].companyId,
+                            environment:todo.data.data[0].environment,
+                            integrationid:todo.data.data[0].integrationid
+                        }
+                        const APICredential = await listservice.prototype.GetAPICredentials(paymentcred);
+                        if(APICredential){
+                            let getwaycred ={
+                                ...APICredential,
+                                gatewayname:gatewayname
+                            }
+                            for (const [indx, item] of todo.data.data.entries()) {   
+                                let stagerecordid =item._id;                              
+                                const invoicedetails = await this.GetinvoiceList(item);
+                                if(invoicedetails) {
+                                    console.log(`safety kosam${indx}`);
+                                    // invoicedetails.forEach(async (x)=>{
+                                        const getwayresponse = await listservice.prototype.sendtopaymentgateway(invoicedetails.data,getwaycred,stagerecordid);
+                                        if(getwayresponse){
+                                            console.log(getwayresponse);
+                                        }
+
+                                    // })
+                                }
+
+                            }
+                            console.log("success");
+                        }
+
+                    } else {
+                        console.log("*****no records for invoice*****")
+                    }      
+                //    const integrationarray=[];
+                //    todo.data.forEach(element =>{
+                //        if(element.connected && element.connected.integrationStatus)
+                //        {
+                //         integrationarray.push(element);
+                //        }
+                //    });                  
+                //    if(integrationarray.length > 0) {
+                //        const PaymentCredents = await listservice.prototype.GetAPICredentials(integrationarray);
+                //    } 
+                   
+                   
+                }
+            }
+            console.log('Finished!');
+        }   
+
+    }
+    async GetinvoiceList(item) {
+
+        let APiUrl = `contractmaster/getByBillingId?id=${item.Value[0].transactionID}&uId=${item.Value[0].uniqueID}`;
+        console.log(APiUrl);
+        let headers = {
+          Authorization: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wYW55SWQiOiI1ZjQ4OTkwNjVhMjc5NzA2YjBjZTgyMTEiLCJjb21wYW55TmFtZSI6IkNvb2xlciIsImlzQWRtaW4iOiIxNTEiLCJ1c2VyVHlwZSI6NCwiaXNTdXBlckFkbWluIjowLCJ1c2VySWQiOiI1ZjQ4OTkxYTVhMjc5NzA2YjBjZTgzNzQiLCJ1c2VyTmFtZSI6IkNvb2xlciIsImlhdCI6MTU5OTg0MDkzOX0.y9UCSb4PUsKtaeuNTHhzCMU8rWDFT2hYySJvIh91jr4`,
+          environment: config.environment
+        };
+        item.headers = headers;
+        item.APiUrl = APiUrl;
+        let invoiceintegrationlist = await listservice.prototype.backendrequest(item);
+       
+        // logger.info("Application fetched the info for razer pay" ,JSON.stringify(invoiceintegrationlist.data.data.data));
+        if (invoiceintegrationlist) {
+          let stageinvdata = invoiceintegrationlist.data.data.data;         
+          //return invoiceintegrationlist;
+          return { status: 200, data: stageinvdata }; 
+        } else {
+          return { status: 500, error: "some error occoured" }; 
+        }
+      }
+
+      async backendrequest(item) {
+        try {
+          const headers = item.headers;
+          const optionurl = config.baseUrl + item.APiUrl;
+          const response = await axios.get(optionurl, {
+            headers
+          });
+          if (response) {
+            return { status: 200, data: response };
+          }
+          else {
+            return { status: 500, error: "some error occoured" };
+    
+          }
+        } catch (error) {
+          return { status: 500, error: error };
+        }
+      }
 }

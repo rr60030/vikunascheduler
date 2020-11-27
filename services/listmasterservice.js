@@ -140,13 +140,13 @@ module.exports = class ListMasterService {
 
   }
 
-  async getListforIntegration() {
+  async getListforIntegration(environment) {
     let url = 'list/getinvoicelistforintegration';
     const optionurl = config.baseUrl + url;
     let myvvalue = await axios.get(optionurl, {
       headers: {
         'Authorization': `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wYW55SWQiOiI1ZjQ4OTkwNjVhMjc5NzA2YjBjZTgyMTEiLCJjb21wYW55TmFtZSI6IkNvb2xlciIsImlzQWRtaW4iOiIxNTEiLCJ1c2VyVHlwZSI6NCwiaXNTdXBlckFkbWluIjowLCJ1c2VySWQiOiI1ZjQ4OTkxYTVhMjc5NzA2YjBjZTgzNzQiLCJ1c2VyTmFtZSI6IkNvb2xlciIsImlhdCI6MTU5OTg0MDkzOX0.y9UCSb4PUsKtaeuNTHhzCMU8rWDFT2hYySJvIh91jr4`,
-        environment: 'Live'
+        environment: environment
       }
     });
     return myvvalue.data;
@@ -202,8 +202,8 @@ module.exports = class ListMasterService {
   async backendpostrequest(item) {
     try {
       const headers = item.headers;
-      const optionurl = config.baseUrl + item.APiUrl;
-      const response = await axios.post(optionurl, item.payload,{
+      const optionurl = item.APiUrl;
+      const response = await axios.post(optionurl, item,{
         headers
       });
       if (response) {
@@ -445,6 +445,57 @@ request(options, function (error, response, body) {
     });
     if (response) {
       return { status: 200, data:response.data}
+    }
+  }
+
+  async fetchstagerecords(item){
+    let env = item.environment;
+    let optionurl = `list/getliststagerecords`
+     let url = optionurl + `?companyId=${item.companyId}`;
+   //  console.log("url",url);
+     const response = await axios.get(config.baseUrl + url, {
+       headers: {
+         'Authorization': `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wYW55SWQiOiI1ZjQ4OTkwNjVhMjc5NzA2YjBjZTgyMTEiLCJjb21wYW55TmFtZSI6IkNvb2xlciIsImlzQWRtaW4iOiIxNTEiLCJ1c2VyVHlwZSI6NCwiaXNTdXBlckFkbWluIjowLCJ1c2VySWQiOiI1ZjQ4OTkxYTVhMjc5NzA2YjBjZTgzNzQiLCJ1c2VyTmFtZSI6IkNvb2xlciIsImlhdCI6MTU5OTg0MDkzOX0.y9UCSb4PUsKtaeuNTHhzCMU8rWDFT2hYySJvIh91jr4`,
+         environment:env
+       }
+     });
+     if (response) {
+       return { status: 200, data:response.data}
+     }
+   }
+
+  async GetAPICredentials(integrationarray){
+    let url = `integrations/getIntegrationById/${integrationarray.integrationid}`;
+    const headers = {
+      'Authorization': `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wYW55SWQiOiI1ZjQ4OTkwNjVhMjc5NzA2YjBjZTgyMTEiLCJjb21wYW55TmFtZSI6IkNvb2xlciIsImlzQWRtaW4iOiIxNTEiLCJ1c2VyVHlwZSI6NCwiaXNTdXBlckFkbWluIjowLCJ1c2VySWQiOiI1ZjQ4OTkxYTVhMjc5NzA2YjBjZTgzNzQiLCJ1c2VyTmFtZSI6IkNvb2xlciIsImlhdCI6MTU5OTg0MDkzOX0.y9UCSb4PUsKtaeuNTHhzCMU8rWDFT2hYySJvIh91jr4`,
+      environment: integrationarray.environment,
+      companyId:integrationarray.companyId,
+      source:"noti"
+    }
+    const response = await axios.get(config.baseUrl + url, {
+      headers: headers
+    });
+    if (response) {
+      console.log(response);
+      return { status: 200, data:response.data}
+    }
+  }
+  async sendtopaymentgateway(payload,APIcred,stagerecordid){
+    let headers = {
+        Authorization: config.Authorization,
+        environment: config.environment
+      };
+    const item ={};
+    item.headers=headers;
+    item.payload=payload;
+    item.APiUrl=`${config.baseUrl}list/sendinvoiceinfotovendor`;
+    item.cred=APIcred;
+    item.stagerecordid=stagerecordid;
+    const payamentresponse = await this.backendpostrequest(item);
+    if(payamentresponse){
+      console.log("payamentresponse",payamentresponse);
+      return {status: 200, data:payamentresponse}
+
     }
   }
 }
