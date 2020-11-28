@@ -165,7 +165,11 @@ module.exports = class GenerateInvoiceListController {
                                         if(getwayresponse && getwayresponse.status ==200){
                                             console.log(`invoice generated for ${item.companyId}`);
                                         } else {
+                                            if(getwayresponse.error.response){
                                             console.log(`Failed for  ${item.companyId} reason is ${JSON.stringify(getwayresponse.error.response.data.message)}  `);
+                                            } else {
+                                                console.log(getwayresponse.error.code);
+                                            }
                                         }
 
                                     // })

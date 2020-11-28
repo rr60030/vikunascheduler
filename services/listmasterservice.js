@@ -491,7 +491,8 @@ request(options, function (error, response, body) {
     item.headers=headers;
     item.payload=payload;
     item.APiUrl=`${config.baseUrl}list/sendinvoiceinfotovendor`;
-    item.cred=APIcred;
+    item.cred=APIcred.data.data;
+    item.payvendor=APIcred.gatewayname
     item.stagerecordid=stagerecordid;
     const payamentresponse = await this.backendpostrequest(item);
     if(payamentresponse && payamentresponse.status ==200){
