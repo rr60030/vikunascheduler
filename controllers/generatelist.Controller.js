@@ -2,12 +2,16 @@ const listservice = require('../services/listmasterservice');
 const config = require('../util/configuration.json');
 const moment = require('moment');
 module.exports = class GenerateInvoiceListController {
-    async getcompanineslist(environment) {
+    async getcompanineslist(environment,scheduletime) {
         console.log("*****Get CompanyIDs + Time (Schedular)*****");
-        const value = await this.CallCompaniesforlistMethod(environment);      
+        let query ={            
+            ListGenTime:scheduletime
+        }
+        const value = await this.CallCompaniesforlistMethod(environment,query);      
         if (value.status && value.status == 500) {
             console.log(value.message)
         } else {
+            if(value && value.length > 0){
             const datavalue = value.data;
             for (const [idx, url] of datavalue.entries()) {
                // console.log(`environment:${url.environment}, CompanyID:${url.companyId}`);
@@ -101,10 +105,14 @@ module.exports = class GenerateInvoiceListController {
                 }
             }
             console.log('Finished!');
+        } else {
+            console.log("No scheduled companies found");
+            console.log('Finished!');
+        }
         }
     }
-    CallCompaniesforlistMethod(environment) {
-        return listservice.prototype.GetCompaniesforlist(environment)
+    CallCompaniesforlistMethod(environment,query) {
+        return listservice.prototype.GetCompaniesforlist(environment,query)
             .then((response) => {
                 return { status: 200, data: response.data };
             })
@@ -113,12 +121,16 @@ module.exports = class GenerateInvoiceListController {
             });
     }
 
-    async processinvoicepayment(environment){
-        console.log("*****Get CompanyIDs + Time (Schedular)*****");
-        const value = await this.CallCompaniesforlistMethod(environment);      
+    async processinvoicepayment(environment,scheduletime){
+        console.log("*****Get CompanyIDs + Time (Schedular) for invoice generation*****");
+        let query ={
+            ListDispTime:scheduletime           
+        }
+        const value = await this.CallCompaniesforlistMethod(environment,query);      
         if (value.status && value.status == 500) {
             console.log(value.message)
         } else {
+            if(value && value.length > 0){
             const datavalue = value.data;
             for (const [idx, url] of datavalue.entries()) {
                // console.log(`environment:${url.environment}, CompanyID:${url.companyId}`);
@@ -177,6 +189,10 @@ module.exports = class GenerateInvoiceListController {
                 }
             }
             console.log('Finished!');
+        } else {
+            console.log("No scheduled companies found for invoice generation");
+            console.log('Finished!');
+        }
         }   
 
     }

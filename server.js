@@ -84,12 +84,12 @@ function intiApp() {
 }
 intiApp();
 
-const scheduletime=dateFormat(new Date(), "H") + ":00";
+let scheduletime=dateFormat(new Date(), "H") + ":00";
 var rule = new schedule.RecurrenceRule();
-rule.minute = new schedule.Range(0, 59,2);
+rule.minute = new schedule.Range(0, 59,5);
 let invoicerule = new schedule.RecurrenceRule();
-invoicerule.minute= new schedule.Range(0,59,2);
-
+invoicerule.minute= new schedule.Range(0,59,10);
+console.log(scheduletime);
 schedule.scheduleJob(rule, function(){ 
     if(global.NoErrorInfo)
     console.log("some error ");
@@ -105,12 +105,12 @@ schedule.scheduleJob(rule, function(){
         let hours = date_ob.getHours();
         let minutes = date_ob.getMinutes();
         let seconds = date_ob.getSeconds();
-                
+        scheduletime=dateFormat(new Date(), "H") + ":00";        
         console.log(year + "-" + month + "-" + date + ' ' + hours + ":" + minutes + ":" + seconds);
        
       console.log("<--------List Generation Started------->");
       //masgterlist.prototype.getcompanineslist(config.environment);
-     generatelistcontroller.prototype.getcompanineslist(config.environment);
+    generatelistcontroller.prototype.getcompanineslist(config.environment,scheduletime);
     }
     // getcompanieslist --from timer 
     // getcompanineslist -- from controller
@@ -134,7 +134,7 @@ schedule.scheduleJob(invoicerule, function(){
         let hours = date_ob.getHours();
         let minutes = date_ob.getMinutes();
         let seconds = date_ob.getSeconds();
-                
+        scheduletime=dateFormat(new Date(), "H") + ":00";      
         console.log(year + "-" + month + "-" + date + ' ' + hours + ":" + minutes + ":" + seconds);
         Date.prototype.toUnixTime = function() { return this.getTime()/1000|0 };
         Date.time = function() { return new Date().toUnixTime(); }
@@ -142,7 +142,7 @@ schedule.scheduleJob(invoicerule, function(){
         // Get the current unix time: 
         console.log("Current Time: " + Date.time())
     
-        generatelistcontroller.prototype.processinvoicepayment(config.environment);
+       generatelistcontroller.prototype.processinvoicepayment(config.environment,scheduletime);
     } 
 });
 

@@ -8,10 +8,10 @@ const Razorpay = require("razorpay");
 
 module.exports = class ListMasterService {
 
-  async GetCompaniesforlist(environment) {  
-    let url = 'list/getsampletest';
+  async GetCompaniesforlist(environment,query) {  
+    let url ='list/getsampletest';
     const optionurl = config.baseUrl + url;   
-    let myvvalue = await this.requestinfo(optionurl,environment);
+    let myvvalue = await this.requestinfo(optionurl,environment,query);
     return myvvalue.data;
   }
 
@@ -36,13 +36,15 @@ module.exports = class ListMasterService {
     console.log('Finished!');
   }
 
-  async requestinfo(optionurl,env) {
+  async requestinfo(optionurl,env,query) {
     const url = `list/getsampletest`;
     const response = await axios.get(config.baseUrl + url, {
       headers: {
         'Authorization': `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wYW55SWQiOiI1ZjQ4OTkwNjVhMjc5NzA2YjBjZTgyMTEiLCJjb21wYW55TmFtZSI6IkNvb2xlciIsImlzQWRtaW4iOiIxNTEiLCJ1c2VyVHlwZSI6NCwiaXNTdXBlckFkbWluIjowLCJ1c2VySWQiOiI1ZjQ4OTkxYTVhMjc5NzA2YjBjZTgzNzQiLCJ1c2VyTmFtZSI6IkNvb2xlciIsImlhdCI6MTU5OTg0MDkzOX0.y9UCSb4PUsKtaeuNTHhzCMU8rWDFT2hYySJvIh91jr4`,
-        environment: env
-      }
+        environment: env,
+        
+      },
+      data:query
     });
     if (response) {    
       // let obj = {
