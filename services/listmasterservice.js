@@ -494,10 +494,12 @@ request(options, function (error, response, body) {
     item.cred=APIcred;
     item.stagerecordid=stagerecordid;
     const payamentresponse = await this.backendpostrequest(item);
-    if(payamentresponse){
+    if(payamentresponse && payamentresponse.status ==200){
       console.log("payamentresponse",payamentresponse);
       return {status: 200, data:payamentresponse}
 
+    } else {
+      return {status: payamentresponse.status, error:payamentresponse.error}
     }
   }
 }

@@ -11,7 +11,7 @@ module.exports = class GenerateInvoiceListController {
         if (value.status && value.status == 500) {
             console.log(value.message)
         } else {
-            if(value && value.length > 0){
+            if(value && value.data.length > 0){
             const datavalue = value.data;
             for (const [idx, url] of datavalue.entries()) {
                // console.log(`environment:${url.environment}, CompanyID:${url.companyId}`);
@@ -49,7 +49,9 @@ module.exports = class GenerateInvoiceListController {
                         environment: url.environment
                     };
                     const invoicerecords = await listservice.prototype.fetchlistrecords(query,optionurl);
-                    if(invoicerecords.data && invoicerecords.data.data){
+                 
+                    if(invoicerecords.data && invoicerecords.data.data && invoicerecords.data.data.contract_data.billingdata.length > 0
+                        && invoicerecords.data.data.contract_data.billingdata[0].liststatus == 0){
                         let insertarray = [];
                         let listdata = invoicerecords.data.data.contract_data.billingdata;
                         if (listdata.length > 0) {
@@ -130,7 +132,7 @@ module.exports = class GenerateInvoiceListController {
         if (value.status && value.status == 500) {
             console.log(value.message)
         } else {
-            if(value && value.length > 0){
+            if(value && value.data.length > 0){
             const datavalue = value.data;
             for (const [idx, url] of datavalue.entries()) {
                // console.log(`environment:${url.environment}, CompanyID:${url.companyId}`);
@@ -160,8 +162,10 @@ module.exports = class GenerateInvoiceListController {
                                     console.log(`safety kosam${indx}`);
                                     // invoicedetails.forEach(async (x)=>{
                                         const getwayresponse = await listservice.prototype.sendtopaymentgateway(invoicedetails.data,getwaycred,stagerecordid);
-                                        if(getwayresponse){
-                                            console.log(getwayresponse);
+                                        if(getwayresponse && getwayresponse.status ==200){
+                                            console.log(`invoice generated for ${item.companyId}`);
+                                        } else {
+                                            console.log(`Failed for  ${item.companyId} reason is ${JSON.stringify(getwayresponse.error.response.data.message)}  `);
                                         }
 
                                     // })
