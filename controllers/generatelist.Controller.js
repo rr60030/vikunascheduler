@@ -51,11 +51,17 @@ module.exports = class GenerateInvoiceListController {
                     const invoicerecords = await listservice.prototype.fetchlistrecords(query,optionurl);
                  
                     if(invoicerecords.data && invoicerecords.data.data && invoicerecords.data.data.contract_data.billingdata.length > 0
-                        && invoicerecords.data.data.contract_data.billingdata[0].liststatus == 0){
+                        ){
+                            const listitemarry =[];
+                            invoicerecords.data.data.contract_data.billingdata.forEach(element =>{
+                                if(element.liststatus == 0){
+                                    listitemarry.push(element);
+                                }
+                            })
                         let insertarray = [];
                         let listdata = invoicerecords.data.data.contract_data.billingdata;
-                        if (listdata.length > 0) {
-                            listdata.forEach(element => {           
+                        if (listitemarry.length > 0) {
+                            listitemarry.forEach(element => {           
                                 let itemArray = [];
                                 itemArray.push(element);
                                 let item = {
