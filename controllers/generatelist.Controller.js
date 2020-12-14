@@ -81,7 +81,7 @@ module.exports = class GenerateInvoiceListController {
                                 }
                                 insertarray.push(item);
                               });
-                              console.log(`*****Records found for ${url.companyId}*****`);
+                              console.log(`*****Records found for ${url.companyId}  to generate list*****`);
                               insertarray.forEach(arrelement =>{
                                 arrelement.Value.forEach(element => {
                                     element.milestoneamount = element.milestoneamount.$numberDecimal;
@@ -99,10 +99,10 @@ module.exports = class GenerateInvoiceListController {
                               }
                              
                         } else {
-                            console.log(`*****No Records found for ${url.companyId}*****`);
+                            console.log(`*****No Records found for ${url.companyId}  to generate list*****`);
                         }
                     } else {
-                        console.log(`*****No Records found for ${url.companyId}*****`);
+                        console.log(`*****No Records found for ${url.companyId}  to generate list*****`);
                     }
 
                    } else {
@@ -171,11 +171,13 @@ module.exports = class GenerateInvoiceListController {
                                         if(getwayresponse && getwayresponse.status ==200){
                                             console.log(`invoice generated for ${item.companyId}`);
                                         } else {
-                                            if(getwayresponse.error.response){
-                                            console.log(`Failed for  ${item.companyId} reason is ${JSON.stringify(getwayresponse.error.response.data.message)}  `);
-                                            } else {
-                                                console.log(getwayresponse.error.code);
-                                            }
+                                            // if(getwayresponse.error.response){
+                                            // console.log(`Failed for  ${item.companyId} reason is ${JSON.stringify(getwayresponse.error.response.data.message)}  `);
+                                            // } else {
+                                            //     console.log(getwayresponse.error.code);
+                                            // }
+                                            let message = { status:getwayresponse.status,message:getwayresponse.message};
+                                            console.log(message);
                                         }
 
                                     // })

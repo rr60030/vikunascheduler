@@ -216,7 +216,7 @@ module.exports = class ListMasterService {
 
       }
     } catch (error) {
-      return { status: 500, error: error };
+      return { status: 500, message: error.response.data.message };
     }
   }
 
@@ -478,7 +478,7 @@ request(options, function (error, response, body) {
       headers: headers
     });
     if (response) {
-      console.log(response);
+     // console.log(response);
       return { status: 200, data:response.data}
     }
   }
@@ -500,7 +500,7 @@ request(options, function (error, response, body) {
       return {status: 200, data:payamentresponse}
 
     } else {
-      return {status: payamentresponse.status, error:payamentresponse.error}
+      return {status: payamentresponse.status, message:payamentresponse.message}
     }
   }
 }
